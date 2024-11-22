@@ -12,6 +12,7 @@ enum Color: String, CaseIterable {
     case background = "MainBackground"
     case border = "BorderColor"
     case placeholder = "PlaceholderColor"
+    case textFieldDescription = "TextfieldDescriptionColor"
 }
 
 extension UIColor {

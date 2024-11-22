@@ -16,16 +16,14 @@ class RegisterViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         view.showsVerticalScrollIndicator = false
-        view.contentInsetAdjustmentBehavior = .never // ignore the safe area
+        view.contentInsetAdjustmentBehavior = .never
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private lazy var registerView: RegisterView = {
         let view = RegisterView()
-        view.onBackButtonTapped = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
+        view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -67,5 +65,15 @@ class RegisterViewController: UIViewController {
             registerView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             registerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
         ])
+    }
+}
+
+extension RegisterViewController: RegisterViewDelegate {
+    func didTapBackButton() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    func didTapAddUserButton() {
+        
     }
 }

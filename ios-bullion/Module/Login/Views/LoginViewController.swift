@@ -30,15 +30,16 @@ class LoginViewController: UIViewController {
     private let roundedContainerView = RoundedContainerView()
     
     private let emailTextField: TextFieldView = {
-        let textfield = TextFieldView(title: "Email Address", type: .emailAddress, placeholder: "Enter email..")
-        textfield.setKeyboardType(.emailAddress)
+        let textfield = TextFieldView()
+        textfield.configure(title: "Email Address", placeholder: "Enter email..", contentType: .emailAddress, keyboardType: .emailAddress)
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
     private let passwordTextField: TextFieldView = {
-        let textfield = TextFieldView(title: "Password", type: .password, placeholder: "Enter password..")
-        textfield.isSecureTextField(true)
+        let textfield = TextFieldView()
+        textfield.configure(title: "Password", placeholder: "Enter password..", contentType: .password)
+        textfield.secureTextField()
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
@@ -104,7 +105,7 @@ class LoginViewController: UIViewController {
             addUserButton.topAnchor.constraint(equalTo: signInButton.bottomAnchor, constant: 16),
             addUserButton.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
             addUserButton.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            addUserButton.bottomAnchor.constraint(equalTo: roundedContainerView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            addUserButton.bottomAnchor.constraint(equalTo: roundedContainerView.safeAreaLayoutGuide.bottomAnchor),
             addUserButton.heightAnchor.constraint(equalToConstant: PrimaryButton.defaultHeight),
             
             spacerLayoutGuide.topAnchor.constraint(equalTo: view.topAnchor),
