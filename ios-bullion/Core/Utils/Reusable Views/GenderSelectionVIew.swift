@@ -26,7 +26,7 @@ class GenderSelectionView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Gender"
-        label.font = .customFont(font: .roboto, style: .medium, size: 14)
+        label.font = .customFont(font: .inter, style: .regular, size: 12)
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

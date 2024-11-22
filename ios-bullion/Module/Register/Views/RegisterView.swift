@@ -44,8 +44,7 @@ class RegisterView: UIView {
     
     private lazy var dobTextField: TextFieldView = {
         let textfield = TextFieldView()
-        textfield.configure(title: "Date of Birth", placeholder: "Select date", contentType: .birthdateDay)
-        textfield.disableInputText()
+        textfield.configure(title: "Date of Birth", placeholder: "Select date", contentType: .birthdateDay, isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconCalendar")!)
         textfield.didTappedRightIcon = { [weak self] in
             
@@ -70,8 +69,7 @@ class RegisterView: UIView {
     
     private lazy var photoProfileTextField: TextFieldView = {
         let textfield = TextFieldView()
-        textfield.configure(title: "Photo Profile", placeholder: "Select photo")
-        textfield.disableInputText()
+        textfield.configure(title: "Photo Profile", placeholder: "Select photo", isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconLink")!)
         textfield.didTappedRightIcon = { [weak self] in
             
@@ -82,18 +80,16 @@ class RegisterView: UIView {
     
     private let passwordTextField: TextFieldView = {
         let textfield = TextFieldView()
-        textfield.configure(title: "Password", placeholder: "Enter password..", contentType: .password)
+        textfield.configure(title: "Password", placeholder: "Enter password..", description: "Min 8 Char | Min 1 Capital and Number", contentType: .password)
         textfield.secureTextField()
-        textfield.addDescription(with: "Min 8 Char | Min 1 Capital and Number")
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
     private let confirmPasswordTextField: TextFieldView = {
         let textfield = TextFieldView()
-        textfield.configure(title: "Confirm Password", placeholder: "Re-enter password..", contentType: .password)
+        textfield.configure(title: "Confirm Password", placeholder: "Re-enter password..", description: "Make sure the password matches", contentType: .password)
         textfield.secureTextField()
-        textfield.addDescription(with: "Make sure the password matches")
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()

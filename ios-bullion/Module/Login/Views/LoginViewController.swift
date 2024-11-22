@@ -31,14 +31,14 @@ class LoginViewController: UIViewController {
     
     private let emailTextField: TextFieldView = {
         let textfield = TextFieldView()
-        textfield.configure(title: "Email Address", placeholder: "Enter email..", contentType: .emailAddress, keyboardType: .emailAddress)
+        textfield.configure(title: "Email Address", titleFont: .customFont(font: .roboto, style: .medium, size: 14), placeholder: "Enter email..", contentType: .emailAddress, keyboardType: .emailAddress)
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
     private let passwordTextField: TextFieldView = {
         let textfield = TextFieldView()
-        textfield.configure(title: "Password", placeholder: "Enter password..", contentType: .password)
+        textfield.configure(title: "Password", titleFont: .customFont(font: .roboto, style: .medium, size: 14), placeholder: "Enter password..", contentType: .password)
         textfield.secureTextField()
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield

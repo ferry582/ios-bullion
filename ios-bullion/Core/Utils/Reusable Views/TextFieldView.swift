@@ -12,14 +12,12 @@ class TextFieldView: UIView {
     var didTappedRightIcon: (() -> Void)?
     private var isEditable = true
     private var isSecureTextField = false
-    private var descriptionLabelTopConstraint: NSLayoutConstraint?
     
     // MARK: - UI Components
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .customFont(font: .roboto, style: .medium, size: 14)
+        label.font = .customFont(font: .inter, style: .regular, size: 12)
         label.textAlignment = .left
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -29,7 +27,6 @@ class TextFieldView: UIView {
         label.textColor = UIColor(color: .textFieldDescription)
         label.textAlignment = .left
         label.isHidden = true
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -37,7 +34,6 @@ class TextFieldView: UIView {
         let textfield = PaddedTextField()
         textfield.textColor = .black
         textfield.font = .customFont(font: .roboto, style: .regular, size: 14)
-        textfield.textAlignment = .left
         textfield.backgroundColor = .white
         textfield.clipsToBounds = true
         textfield.layer.cornerRadius = 24
@@ -45,6 +41,14 @@ class TextFieldView: UIView {
         textfield.layer.borderWidth = 1
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
+    }()
+    
+    private let stackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .vertical
+        sv.spacing = 8
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        return sv
     }()
     
     // MARK: - Initializer
@@ -61,36 +65,28 @@ class TextFieldView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        stackView.layoutIfNeeded()
         titleLabel.setGradientColor()
     }
     
     // MARK: - UI Setup
     private func configureViews() {
-        addSubview(titleLabel)
-        addSubview(descriptionLabel)
-        addSubview(textField)
-        
-        descriptionLabelTopConstraint = descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor)
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(descriptionLabel)
+        stackView.addArrangedSubview(textField)
+        addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            titleLabel.topAnchor.constraint(equalTo: topAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            descriptionLabelTopConstraint!,
-            descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            textField.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
-            textField.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textField.trailingAnchor.constraint(equalTo: trailingAnchor),
-            textField.bottomAnchor.constraint(equalTo: bottomAnchor),
-            textField.heightAnchor.constraint(equalToConstant: 48)
+            textField.heightAnchor.constraint(equalToConstant: 48),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
     
     // MARK: - Methods
-    func configure(title: String, placeholder: String, contentType: UITextContentType? = nil, keyboardType: UIKeyboardType = .default) {
+    func configure(title: String, titleFont: UIFont? = nil, placeholder: String, description: String? = nil, contentType: UITextContentType? = nil, keyboardType: UIKeyboardType = .default, isEditable: Bool = true) {
         titleLabel.text = title
         textField.textContentType = contentType
         textField.keyboardType = keyboardType
@@ -98,16 +94,18 @@ class TextFieldView: UIView {
             string: placeholder,
             attributes: [NSAttributedString.Key.foregroundColor: UIColor(color: .placeholder)]
         )
+        self.isEditable = isEditable
+        if let titleFont { titleLabel.font = titleFont }
+        if let description {
+            descriptionLabel.text = description
+            descriptionLabel.isHidden = false
+        }
     }
     
     func secureTextField() {
         isSecureTextField = true
         textField.isSecureTextEntry = true
         setRightIcon(image: UIImage(named: "IconHidePass")!)
-    }
-    
-    func disableInputText() {
-        self.isEditable = false
     }
     
     func setRightIcon(image: UIImage) {
@@ -123,12 +121,6 @@ class TextFieldView: UIView {
         textField.padding = .init(top: 0, left: 16, bottom: 0, right: 56)
         textField.rightView = button
         textField.rightViewMode = .always
-    }
-    
-    func addDescription(with description: String) {
-        descriptionLabel.text = description
-        descriptionLabel.isHidden = false
-        descriptionLabelTopConstraint?.constant = 8
     }
     
     // MARK: - Actions
