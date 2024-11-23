@@ -14,8 +14,7 @@ class LoginViewModel {
     func login(email: String, password: String) {
         do {
             try Validator.validate(text: email, with: [.notEmpty(field: "Email"), .validEmail])
-            try Validator.validate(text: password, with: [.notEmpty(field: "Password"), .validPassword])
-            
+            try Validator.validate(text: password, with: [.notEmpty(field: "Password"), .validPasswordLength])
         } catch let error as ValidationError {
             alertMessage.send(error.description)
         } catch {

@@ -30,10 +30,14 @@ struct Rule {
         if !predicate.evaluate(with: text) { throw ValidationError.invalidEmail }
     })
     
-    static let validPassword: Rule = Rule(check:  { pass in
+    static let validPassword: Rule = Rule(check: { pass in
         let regex = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d\\S]{8,}$"
         let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
         if !predicate.evaluate(with: pass) { throw ValidationError.invalidPassword }
+    })
+    
+    static let validPasswordLength: Rule = Rule(check: { pass in
+        if pass.count < 8 { throw ValidationError.invalidPasswordLength }
     })
 }
 
@@ -41,6 +45,7 @@ enum ValidationError: Error {
     case notEmpty(field: String)
     case invalidEmail
     case invalidPassword
+    case invalidPasswordLength
     
     var description: String {
         switch self {
@@ -48,8 +53,10 @@ enum ValidationError: Error {
             return "\(field) must not be empty"
         case .invalidEmail:
             return "Must have valid email"
+        case .invalidPasswordLength:
+            return "Password must have at least 8 characters"
         case .invalidPassword:
-            return "Invalid password, password must have at least 8 characters, one uppercase, and one number"
+            return "Password must have at least, one uppercase and one number"
         }
     }
 }
