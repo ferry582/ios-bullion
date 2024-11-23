@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import Combine
 
 class LoginViewController: UIViewController {
 
     // MARK: - Properties
     private let viewModel: LoginViewModel
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components
     private lazy var signInButton: PrimaryButton = {
@@ -65,6 +67,7 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
+        setupObserver()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -116,9 +119,19 @@ class LoginViewController: UIViewController {
         ])
     }
     
+    // MARK: - Observers
+    private func setupObserver() {
+        viewModel.alertMessage
+            .sink { [weak self] message in
+                guard let self = self else { return }
+                Alert.present(title: nil, message: message, actions: .close, from: self)
+            }
+            .store(in: &cancellables)
+    }
+    
     // MARK: - Actions
     @objc func signInButtonTapped(sender: UIButton!) {
-        
+        viewModel.login(email: emailTextField.text, password: passwordTextField.text)
     }
 
     @objc func addUserButtonTapped(sender: UIButton!) {

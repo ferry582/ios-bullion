@@ -13,6 +13,10 @@ class TextFieldView: UIView {
     private var isEditable = true
     private var isSecureTextField = false
     
+    var text: String {
+        return textField.text ?? ""
+    }
+    
     // MARK: - UI Components
     private let titleLabel: UILabel = {
         let label = UILabel()
