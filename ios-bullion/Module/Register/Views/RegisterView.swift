@@ -18,15 +18,6 @@ class RegisterView: UIView {
     weak var delegate: RegisterViewDelegate?
     
     // MARK: - UI Components
-    private lazy var topBarView: TopBarView = {
-        let view = TopBarView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.onBackButtonTapped = { [weak self] in
-            self?.delegate?.didTapBackButton()
-        }
-        return view
-    }()
-    
     private let roundedContainerView = RoundedContainerView()
     
     private let nameTextField: TextFieldView = {
@@ -113,19 +104,13 @@ class RegisterView: UIView {
     
     // MARK: - UI Set Up
     private func configureViews() {
-        addSubview(topBarView)
         addSubview(roundedContainerView)
-        
         [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField, passwordTextField, confirmPasswordTextField, addUserButton].forEach {
             roundedContainerView.addSubview($0)
         }
         
         NSLayoutConstraint.activate([
-            topBarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            topBarView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            topBarView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            roundedContainerView.topAnchor.constraint(equalTo: topBarView.bottomAnchor),
+            roundedContainerView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 24),
             roundedContainerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             roundedContainerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             roundedContainerView.bottomAnchor.constraint(equalTo: bottomAnchor),
