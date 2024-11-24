@@ -15,6 +15,7 @@ enum CustomFonts: String {
 
 enum CustomFontStyle: String {
     case bold = "-Bold"
+    case semibold = "-SemiBold"
     case medium = "-Medium"
     case regular = "-Regular"
 }

@@ -10,6 +10,7 @@ import Combine
 
 class LoginViewModel {
     private(set) var alertMessage = PassthroughSubject<String, Never>()
+    private(set) var navigateToHome = CurrentValueSubject<Bool, Never>(false)
     
     func login(email: String, password: String) {
         do {
@@ -24,6 +25,8 @@ class LoginViewModel {
             try KeychainHelper.standard.upsertToken(Data(bearerToken.utf8), identifier: email)
             UserDefaultsHelper.saveValue(value: email, key: .currentEmail)
             UserDefaultsHelper.saveValue(value: name, key: .currentName)
+            
+            navigateToHome.send(true)
         } catch let error as ValidationError {
             alertMessage.send(error.description)
         } catch {

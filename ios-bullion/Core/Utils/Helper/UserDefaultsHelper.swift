@@ -25,7 +25,7 @@ struct UserDefaultsHelper {
         UserDefaults.standard.object(forKey: key.key) as? T
     }
 
-    static func removeObject(key: Keys) {
+    static func removeValue(key: Keys) {
         UserDefaults.standard.removeObject(forKey: key.key)
     }
 }

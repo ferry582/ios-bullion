@@ -71,8 +71,8 @@ class LoginViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        view.setGradientBackground()
         super.viewWillAppear(animated)
+        view.setGradientBackground()
     }
     
     // MARK: - UI Set Up
@@ -125,6 +125,13 @@ class LoginViewController: UIViewController {
             .sink { [weak self] message in
                 guard let self = self else { return }
                 Alert.present(title: nil, message: message, actions: .close, from: self)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.navigateToHome
+            .sink { [weak self] isNavigate in
+                guard let self = self, isNavigate else { return }
+                self.navigationController?.setViewControllers([HomeViewController(viewModel: HomeViewModel())], animated: true)
             }
             .store(in: &cancellables)
     }
