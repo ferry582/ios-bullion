@@ -15,6 +15,15 @@ class LoginViewModel {
         do {
             try Validator.validate(text: email, with: [.notEmpty(field: "Email"), .validEmail])
             try Validator.validate(text: password, with: [.notEmpty(field: "Password"), .validPasswordLength])
+            
+            let hashedPass = password.sha256()
+            
+            // success response
+            let bearerToken = ""
+            let name = ""
+            try KeychainHelper.standard.upsertToken(Data(bearerToken.utf8), identifier: email)
+            UserDefaultsHelper.saveValue(value: email, key: .currentEmail)
+            UserDefaultsHelper.saveValue(value: name, key: .currentName)
         } catch let error as ValidationError {
             alertMessage.send(error.description)
         } catch {

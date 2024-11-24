@@ -13,5 +13,6 @@ protocol Endpoint {
     var path: String { get }
     var queryItems: [URLQueryItem] { get }
     var method: String { get }
+    var body: Data? { get }
     func generateURLRequest() -> URLRequest?
 }
