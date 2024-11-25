@@ -14,9 +14,11 @@ class HomeViewController: UIViewController {
     private let viewModel: HomeViewModel
     private var cancellables = Set<AnyCancellable>()
     lazy var sections: [Section] = [
-        CarouselSection()
+        CarouselSection(onPageChange: { page in
+            self.updatePageIndicator(currentPage: page)
+        })
     ]
-    
+   
     // MARK: - UI Components
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -35,16 +37,18 @@ class HomeViewController: UIViewController {
         return button
     }()
     
-    lazy var collectionView: UICollectionView = {
+    private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
+        collectionView.isPagingEnabled = true
         collectionView.register(CarouselItemCollectionViewCell.self, forCellWithReuseIdentifier: CarouselItemCollectionViewCell.identifier)
+        collectionView.register(PageIndicatorCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PageIndicatorCollectionReusableView.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
     
-    lazy var collectionViewLayout: UICollectionViewLayout = {
+    private lazy var collectionViewLayout: UICollectionViewLayout = {
         var sections = self.sections
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, environment) -> NSCollectionLayoutSection? in
             return sections[sectionIndex].layoutSection()
@@ -119,6 +123,16 @@ class HomeViewController: UIViewController {
             from: self
         )
     }
+    
+    private func updatePageIndicator(currentPage: Int) {
+        guard let footerView = collectionView.supplementaryView(
+            forElementKind: UICollectionView.elementKindSectionFooter,
+            at: IndexPath(item: 0, section: 0)
+        ) as? PageIndicatorCollectionReusableView else {
+            return
+        }
+        footerView.currentPage(currentPage)
+    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -132,5 +146,14 @@ extension HomeViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         return sections[indexPath.section].configureCell(collectionView: collectionView, indexPath: indexPath)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionFooter:
+            return sections[indexPath.section].configureFooter(collectionView: collectionView, indexPath: indexPath)
+        default:
+            fatalError("Unexpected element kind")
+        }
     }
 }

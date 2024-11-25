@@ -11,11 +11,19 @@ protocol Section {
     var numberOfItems: Int { get }
     func layoutSection() -> NSCollectionLayoutSection
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell
+    func configureFooter(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView
+}
+
+extension Section {
+    func configureFooter(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView {
+        return UICollectionReusableView()
+    }
 }
 
 struct CarouselSection: Section {
     let numberOfItems = 3
-
+    var onPageChange: ((Int) -> Void)?
+    
     func layoutSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -23,11 +31,25 @@ struct CarouselSection: Section {
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.9), heightDimension: .fractionalWidth(0.45))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
+        let footerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(12))
+        let footer = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: footerSize,
+            elementKind: UICollectionView.elementKindSectionFooter,
+            alignment: .bottom
+        )
+        footer.contentInsets = .init(top: 8, leading: 0, bottom: 0, trailing: 0)
+        
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 12
         section.contentInsets = .init(top: 24, leading: 12, bottom: 0, trailing: 12)
-        section.orthogonalScrollingBehavior = .groupPaging
-
+        section.orthogonalScrollingBehavior = .groupPagingCentered
+        section.boundarySupplementaryItems.append(footer)
+        section.visibleItemsInvalidationHandler = { _, offset, environment in
+            let pageWidth = environment.container.contentSize.width
+            let currentPage = Int((offset.x / pageWidth).rounded())
+            self.onPageChange?(currentPage)
+        }
+        
         return section
     }
 
@@ -35,5 +57,11 @@ struct CarouselSection: Section {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: CarouselItemCollectionViewCell.self), for: indexPath) as! CarouselItemCollectionViewCell
         cell.configure(with: UIImage(named: "Banner")!)
         return cell
+    }
+    
+    func configureFooter(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView {
+        let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PageIndicatorCollectionReusableView.identifier, for: indexPath) as! PageIndicatorCollectionReusableView
+        footerView.configure(totalPages: numberOfItems)
+        return footerView
     }
 }
