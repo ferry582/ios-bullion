@@ -19,18 +19,20 @@ class RegisterView: UIView {
     
     // MARK: - UI Components
     private let roundedContainerView = RoundedContainerView()
+    private let genderSelectionView = GenderSelectionView()
+    
+    private let stackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .vertical
+        sv.spacing = 16
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        return sv
+    }()
     
     private let nameTextField: TextFieldView = {
         let textfield = TextFieldView()
         textfield.configure(title: "Name", placeholder: "Enter name..", contentType: .name)
-        textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
-    }()
-    
-    private let genderSelectionView: GenderSelectionView = {
-        let view = GenderSelectionView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
     }()
     
     private lazy var dobTextField: TextFieldView = {
@@ -40,21 +42,18 @@ class RegisterView: UIView {
         textfield.didTappedRightIcon = { [weak self] in
             
         }
-        textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
     private let emailTextField: TextFieldView = {
         let textfield = TextFieldView()
         textfield.configure(title: "Email Address", placeholder: "Enter email..", contentType: .emailAddress, keyboardType: .emailAddress)
-        textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
     private let phoneNumberTextField: TextFieldView = {
         let textfield = TextFieldView()
         textfield.configure(title: "Phone Number", placeholder: "Enter phone number..", contentType: .telephoneNumber, keyboardType: .phonePad)
-        textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
@@ -65,7 +64,6 @@ class RegisterView: UIView {
         textfield.didTappedRightIcon = { [weak self] in
             
         }
-        textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
@@ -73,7 +71,6 @@ class RegisterView: UIView {
         let textfield = TextFieldView()
         textfield.configure(title: "Password", placeholder: "Enter password..", description: "Min 8 Char | Min 1 Capital and Number", contentType: .password)
         textfield.secureTextField()
-        textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
@@ -81,7 +78,6 @@ class RegisterView: UIView {
         let textfield = TextFieldView()
         textfield.configure(title: "Confirm Password", placeholder: "Re-enter password..", description: "Make sure the password matches", contentType: .password)
         textfield.secureTextField()
-        textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
     
@@ -105,9 +101,11 @@ class RegisterView: UIView {
     // MARK: - UI Set Up
     private func configureViews() {
         addSubview(roundedContainerView)
-        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField, passwordTextField, confirmPasswordTextField, addUserButton].forEach {
-            roundedContainerView.addSubview($0)
+        addSubview(stackView)
+        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField, passwordTextField, confirmPasswordTextField].forEach {
+            stackView.addArrangedSubview($0)
         }
+        addSubview(addUserButton)
         
         NSLayoutConstraint.activate([
             roundedContainerView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 24),
@@ -115,39 +113,11 @@ class RegisterView: UIView {
             roundedContainerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             roundedContainerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            nameTextField.topAnchor.constraint(equalTo: roundedContainerView.topAnchor, constant: 32),
-            nameTextField.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            nameTextField.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
+            stackView.topAnchor.constraint(equalTo: roundedContainerView.topAnchor, constant: 32),
+            stackView.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
+            stackView.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
             
-            genderSelectionView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 16),
-            genderSelectionView.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            genderSelectionView.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            
-            dobTextField.topAnchor.constraint(equalTo: genderSelectionView.bottomAnchor, constant: 16),
-            dobTextField.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            dobTextField.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            
-            emailTextField.topAnchor.constraint(equalTo: dobTextField.bottomAnchor, constant: 16),
-            emailTextField.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            emailTextField.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            
-            phoneNumberTextField.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 16),
-            phoneNumberTextField.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            phoneNumberTextField.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            
-            photoProfileTextField.topAnchor.constraint(equalTo: phoneNumberTextField.bottomAnchor, constant: 16),
-            photoProfileTextField.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            photoProfileTextField.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            
-            passwordTextField.topAnchor.constraint(equalTo: photoProfileTextField.bottomAnchor, constant: 16),
-            passwordTextField.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            passwordTextField.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            
-            confirmPasswordTextField.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 16),
-            confirmPasswordTextField.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            confirmPasswordTextField.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            
-            addUserButton.topAnchor.constraint(equalTo: confirmPasswordTextField.bottomAnchor, constant: 24),
+            addUserButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 24),
             addUserButton.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
             addUserButton.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
             addUserButton.bottomAnchor.constraint(equalTo: roundedContainerView.bottomAnchor, constant: -32),

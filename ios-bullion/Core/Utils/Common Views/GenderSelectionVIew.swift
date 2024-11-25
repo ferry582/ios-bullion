@@ -86,8 +86,8 @@ class GenderSelectionView: UIView {
         button.configuration = getButtonConfiguration()
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .customFont(font: .roboto, style: .regular, size: 14)
-        button.setImage(UIImage(named: "CheckedBox"), for: .selected)
-        button.setImage(UIImage(named: "UncheckedBox"), for: .normal)
+        button.setImage(UIImage(named: "IconCheckedBox"), for: .selected)
+        button.setImage(UIImage(named: "IconUncheckedBox"), for: .normal)
         button.addTarget(self, action: action, for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

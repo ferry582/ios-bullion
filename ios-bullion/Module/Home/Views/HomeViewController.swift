@@ -43,6 +43,7 @@ class HomeViewController: UIViewController {
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
         collectionView.dataSource = self
+        collectionView.delegate = self
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(CarouselItemCollectionViewCell.self, forCellWithReuseIdentifier: CarouselItemCollectionViewCell.identifier)
         collectionView.register(PageIndicatorCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: PageIndicatorCollectionReusableView.identifier)
@@ -182,6 +183,22 @@ extension HomeViewController: UICollectionViewDataSource {
             return sections[indexPath.section].configureFooter(collectionView: collectionView, indexPath: indexPath)
         default:
             fatalError("Unexpected element kind")
+        }
+    }
+}
+
+extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView.cellForItem(at: indexPath) is UserCollectionViewCell {
+            let detailUserView = DetailUserView()
+            let dialogVC = DialogViewController(detailUserView)
+            
+            detailUserView.didTappedEditButton = { [weak self] in
+                dialogVC.hide()
+                self?.navigationController?.pushViewController(EditUserViewController(viewModel: EditUserViewModel()), animated: true)
+            }
+            
+            navigationController?.present(dialogVC, animated: true)
         }
     }
 }
