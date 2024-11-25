@@ -43,6 +43,7 @@ class TextFieldView: UIView {
         textfield.layer.cornerRadius = 24
         textfield.layer.borderColor = UIColor(color: .border).cgColor
         textfield.layer.borderWidth = 1
+        textfield.autocapitalizationType = .none
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()

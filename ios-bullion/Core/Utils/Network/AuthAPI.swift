@@ -54,6 +54,7 @@ extension AuthAPI: Endpoint {
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.httpBody = body
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         return request
     }
 }

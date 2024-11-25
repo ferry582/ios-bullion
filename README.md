@@ -1,5 +1,4 @@
 # ios-bullion
-on-progress
 
 ## Minimum Deployments
 iOS 17.0
@@ -12,5 +11,6 @@ iOS 17.0
 - UserDefaults
 - CryptoKit
 - UICollectionViewCompositionalLayout 
+- CAGradientLayer
 
 ## Demo

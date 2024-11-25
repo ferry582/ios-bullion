@@ -53,7 +53,9 @@ class LoginViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-
+    
+    private let loadingView = LoadingView()
+    
     // MARK: - Life Cyle
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
@@ -83,6 +85,7 @@ class LoginViewController: UIViewController {
         roundedContainerView.addSubview(signInButton)
         roundedContainerView.addSubview(addUserButton)
         view.addSubview(logoImageView)
+        view.addSubview(loadingView)
         
         let spacerLayoutGuide = UILayoutGuide()
         view.addLayoutGuide(spacerLayoutGuide)
@@ -116,6 +119,9 @@ class LoginViewController: UIViewController {
             
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoImageView.centerYAnchor.constraint(equalTo: spacerLayoutGuide.centerYAnchor),
+            
+            loadingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
     
@@ -132,6 +138,12 @@ class LoginViewController: UIViewController {
             .sink { [weak self] isNavigate in
                 guard let self = self, isNavigate else { return }
                 self.navigationController?.setViewControllers([HomeViewController(viewModel: HomeViewModel())], animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.isLoading
+            .sink { [weak self] isLoading in
+                self?.loadingView.isLoading(isLoading)
             }
             .store(in: &cancellables)
     }
