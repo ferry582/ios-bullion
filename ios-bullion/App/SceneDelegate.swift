@@ -14,9 +14,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
+        let rootViewController = if let _ = UserDefaultsHelper.retrieveValue(key: .currentEmail, type: String.self) {
+            UINavigationController(rootViewController: HomeViewController(viewModel: HomeViewModel()))
+        } else {
+            UINavigationController(rootViewController: LoginViewController(viewModel: LoginViewModel()))
+        }
+        
         let window = UIWindow(windowScene: windowScene)
-//        window.rootViewController = UINavigationController(rootViewController: LoginViewController(viewModel: LoginViewModel()))
-        window.rootViewController = UINavigationController(rootViewController: HomeViewController(viewModel: HomeViewModel()))
+        window.rootViewController = rootViewController
         window.makeKeyAndVisible()
         self.window = window
     }
