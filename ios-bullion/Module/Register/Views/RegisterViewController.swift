@@ -44,8 +44,8 @@ class RegisterViewController: BaseViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        view.setGradientBackground()
         super.viewWillAppear(animated)
+        view.setGradientBackground()
     }
     
     // MARK: - UI Set Up

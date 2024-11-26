@@ -1,25 +1,25 @@
 //
-//  RegisterView.swift
+//  EditUserView.swift
 //  ios-bullion
 //
-//  Created by Ferry Dwianta P on 22/11/24.
+//  Created by Ferry Dwianta P on 26/11/24.
 //
 
 import UIKit
 
-protocol RegisterViewDelegate: AnyObject {
+protocol EditUserViewDelegate: AnyObject {
     func didTapAddUserButton()
 }
 
-class RegisterView: UIView {
+class EditUserView: UIView {
     
     // MARK: - Properties
-    weak var delegate: RegisterViewDelegate?
+    weak var delegate: EditUserViewDelegate?
     
     // MARK: - UI Components
     private let roundedContainerView = RoundedContainerView()
     private let genderSelectionView = GenderSelectionView()
-    
+        
     private let stackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .vertical
@@ -66,23 +66,9 @@ class RegisterView: UIView {
         return textfield
     }()
     
-    private let passwordTextField: TextFieldView = {
-        let textfield = TextFieldView()
-        textfield.configure(title: "Password", placeholder: "Enter password..", description: "Min 8 Char | Min 1 Capital and Number", contentType: .password)
-        textfield.secureTextField()
-        return textfield
-    }()
-    
-    private let confirmPasswordTextField: TextFieldView = {
-        let textfield = TextFieldView()
-        textfield.configure(title: "Confirm Password", placeholder: "Re-enter password..", description: "Make sure the password matches", contentType: .password)
-        textfield.secureTextField()
-        return textfield
-    }()
-    
-    private lazy var addUserButton: PrimaryButton = {
-        let button = PrimaryButton(title: "Add User")
-        button.addTarget(self, action: #selector(addUserButtonTapped), for: .touchUpInside)
+    private lazy var updateUserButton: PrimaryButton = {
+        let button = PrimaryButton(title: "Update User")
+        button.addTarget(self, action: #selector(updateUserButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -101,10 +87,13 @@ class RegisterView: UIView {
     private func configureViews() {
         addSubview(roundedContainerView)
         addSubview(stackView)
-        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField, passwordTextField, confirmPasswordTextField].forEach {
+        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField].forEach {
             stackView.addArrangedSubview($0)
         }
-        addSubview(addUserButton)
+        addSubview(updateUserButton)
+        
+        let spacerLayoutGuide = UILayoutGuide()
+        addLayoutGuide(spacerLayoutGuide)
         
         NSLayoutConstraint.activate([
             roundedContainerView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 24),
@@ -116,16 +105,19 @@ class RegisterView: UIView {
             stackView.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
             stackView.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
             
-            addUserButton.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 24),
-            addUserButton.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
-            addUserButton.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
-            addUserButton.bottomAnchor.constraint(equalTo: roundedContainerView.bottomAnchor, constant: -32),
-            addUserButton.heightAnchor.constraint(equalToConstant: PrimaryButton.defaultHeight),
+            spacerLayoutGuide.topAnchor.constraint(equalTo: stackView.bottomAnchor),
+            spacerLayoutGuide.bottomAnchor.constraint(equalTo: updateUserButton.topAnchor),
+            spacerLayoutGuide.heightAnchor.constraint(greaterThanOrEqualToConstant: 24),
+            
+            updateUserButton.leadingAnchor.constraint(equalTo: roundedContainerView.leadingAnchor, constant: 24),
+            updateUserButton.trailingAnchor.constraint(equalTo: roundedContainerView.trailingAnchor, constant: -24),
+            updateUserButton.bottomAnchor.constraint(equalTo: roundedContainerView.bottomAnchor, constant: -32),
+            updateUserButton.heightAnchor.constraint(equalToConstant: PrimaryButton.defaultHeight),
         ])
     }
     
     // MARK: - Actions
-    @objc func addUserButtonTapped(sender: UIButton!) {
+    @objc func updateUserButtonTapped(sender: UIButton!) {
         delegate?.didTapAddUserButton()
     }
 }

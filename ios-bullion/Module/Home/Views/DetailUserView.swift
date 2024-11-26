@@ -58,7 +58,7 @@ class DetailUserView: UIView {
     }()
     
     private lazy var editUserButton: PrimaryButton = {
-        let button = PrimaryButton(title: "Add User")
+        let button = PrimaryButton(title: "Edit User")
         button.addTarget(self, action: #selector(editUserButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -96,7 +96,7 @@ class DetailUserView: UIView {
             infoStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             infoStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            editUserButton.topAnchor.constraint(equalTo: infoStackView.bottomAnchor, constant: 10),
+            editUserButton.topAnchor.constraint(equalTo: infoStackView.bottomAnchor, constant: 16),
             editUserButton.leadingAnchor.constraint(equalTo: leadingAnchor),
             editUserButton.trailingAnchor.constraint(equalTo: trailingAnchor),
             editUserButton.bottomAnchor.constraint(equalTo: bottomAnchor),
