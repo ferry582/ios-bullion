@@ -75,6 +75,8 @@ class UserCollectionViewCell: UICollectionViewCell {
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            imageView.heightAnchor.constraint(equalToConstant: 32),
+            imageView.widthAnchor.constraint(equalToConstant: 32),
             
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18.5),
             nameLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10),
@@ -87,10 +89,12 @@ class UserCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func configure(name: String, email: String, dob: String, image: UIImage) {
-        nameLabel.text = name
-        emailLabel.text = email
-        dobLabel.text = dob
-        imageView.image = image
+    func configure(user: User) {
+        nameLabel.text = user.name
+        emailLabel.text = user.email
+        dobLabel.text = user.dob.toFormattedString()
+        if let photo = user.photo {
+            imageView.image = photo
+        }
     }
 }

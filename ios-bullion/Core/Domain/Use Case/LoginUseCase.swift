@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol LoginUseCase {
-    func executeLogin(email: String, password: String) -> AnyPublisher<User, Error>
+    func executeLogin(email: String, password: String) -> AnyPublisher<AuthUser, Error>
 }
 
 struct LoginUseCaseImpl {
@@ -17,7 +17,7 @@ struct LoginUseCaseImpl {
 }
 
 extension LoginUseCaseImpl: LoginUseCase {
-    func executeLogin(email: String, password: String) -> AnyPublisher<User, any Error> {
+    func executeLogin(email: String, password: String) -> AnyPublisher<AuthUser, any Error> {
         return repository.login(email: email, password: password)
     }
 }

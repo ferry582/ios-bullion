@@ -17,10 +17,12 @@ class HomeViewController: UIViewController {
         CarouselSection(onPageChange: { page in
             self.updatePageIndicator(currentPage: page)
         }),
-        ListUsersSection(numberOfItems: 10)
+        ListUsersSection(users: [])
     ]
    
     // MARK: - UI Components
+    private let loadingView = LoadingView()
+    
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "LogoBullion")
@@ -84,6 +86,8 @@ class HomeViewController: UIViewController {
         configureViews()
         configureNavBar()
         setupObserver()
+        
+        viewModel.getUsers()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -111,6 +115,7 @@ class HomeViewController: UIViewController {
     private func configureViews() {
         view.addSubview(collectionView)
         view.addSubview(addUserButton)
+        view.addSubview(loadingView)
         
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -121,7 +126,10 @@ class HomeViewController: UIViewController {
             addUserButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             addUserButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             addUserButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            addUserButton.heightAnchor.constraint(equalToConstant: PrimaryButton.defaultHeight)
+            addUserButton.heightAnchor.constraint(equalToConstant: PrimaryButton.defaultHeight),
+            
+            loadingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
     
@@ -131,6 +139,29 @@ class HomeViewController: UIViewController {
             .sink { [weak self] isNavigate in
                 guard let self = self, isNavigate else { return }
                 self.navigationController?.setViewControllers([LoginViewController(viewModel: LoginViewModel())], animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.alertMessage
+            .sink { [weak self] message in
+                guard let self = self else { return }
+                Alert.present(title: nil, message: message, actions: .close, from: self)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.isLoading
+            .sink { [weak self] isLoading in
+                self?.loadingView.isLoading(isLoading)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.users
+            .sink { [weak self] users in
+                guard let self = self else { return }
+                if let index = self.sections.firstIndex(where: { $0 is ListUsersSection }) {
+                    self.sections[index] = ListUsersSection(users: users)
+                    self.collectionView.reloadSections(IndexSet(integer: index))
+                }
             }
             .store(in: &cancellables)
     }
@@ -199,6 +230,15 @@ extension HomeViewController: UICollectionViewDelegate {
             }
             
             navigationController?.present(dialogVC, animated: true)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.item == viewModel.users.value.count - 1 {
+            if !viewModel.isLoading.value {
+                print("fetch more data")
+                viewModel.getUsers()
+            }
         }
     }
 }

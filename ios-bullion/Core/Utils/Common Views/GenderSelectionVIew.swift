@@ -8,8 +8,8 @@
 import UIKit
 
 enum Gender: String {
-    case male = "Male"
-    case female = "Female"
+    case male = "male"
+    case female = "female"
 }
 
 class GenderSelectionView: UIView {

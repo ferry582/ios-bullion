@@ -2,13 +2,18 @@
 //  User.swift
 //  ios-bullion
 //
-//  Created by Ferry Dwianta P on 25/11/24.
+//  Created by Ferry Dwianta P on 26/11/24.
 //
 
-import Foundation
+import UIKit
 
-struct User: Codable {
+struct User {
+    let id: String
     let name: String
+    let gender: Gender
+    let dob: Date
     let email: String
-    let token: String?
+    let photo: UIImage?
+    let phone: String
+    let address: String
 }

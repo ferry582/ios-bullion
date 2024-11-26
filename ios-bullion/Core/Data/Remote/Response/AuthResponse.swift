@@ -11,5 +11,5 @@ struct AuthResponse: Codable {
     let status: Int
     let iserror: Bool
     let message: String
-    let data: User
+    let data: AuthUser
 }

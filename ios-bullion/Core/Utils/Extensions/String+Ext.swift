@@ -7,6 +7,7 @@
 
 import Foundation
 import CryptoKit
+import UIKit
 
 extension String {
     func sha256() -> String {
@@ -16,5 +17,16 @@ extension String {
             String(format: "%02x", $0)
         }.joined()
         return hashString
+    }
+    
+    func toDateFromISO() -> Date? {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return isoFormatter.date(from: self)
+    }
+    
+    func getImageFromString() -> UIImage? {
+        let imageData = Data(base64Encoded: self, options: .ignoreUnknownCharacters)
+        return imageData == nil ? nil : UIImage(data: imageData!)
     }
 }

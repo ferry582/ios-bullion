@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol AuthRepository {
-    func login(email: String, password: String) -> AnyPublisher<User, Error>
+    func login(email: String, password: String) -> AnyPublisher<AuthUser, Error>
 }
 
 struct AuthRepositoryImpl {
@@ -20,7 +20,7 @@ struct AuthRepositoryImpl {
 }
 
 extension AuthRepositoryImpl: AuthRepository {
-    func login(email: String, password: String) -> AnyPublisher<User, any Error> {
+    func login(email: String, password: String) -> AnyPublisher<AuthUser, any Error> {
         return dataSource.login(email: email, password: password)
             .map { response in
                 return response.data

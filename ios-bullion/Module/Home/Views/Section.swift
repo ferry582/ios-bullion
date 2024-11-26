@@ -72,7 +72,10 @@ struct CarouselSection: Section {
 }
 
 struct ListUsersSection: Section {
-    var numberOfItems: Int
+    var users: [User]
+    var numberOfItems: Int {
+        return users.count
+    }
     
     func layoutSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
@@ -103,6 +106,7 @@ struct ListUsersSection: Section {
     
     func configureCell(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: UserCollectionViewCell.self), for: indexPath) as! UserCollectionViewCell
+        cell.configure(user: users[indexPath.item])
         return cell
     }
     

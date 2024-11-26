@@ -13,4 +13,9 @@ iOS 17.0
 - UICollectionViewCompositionalLayout 
 - CAGradientLayer
 
+## Features
+- Pagination (Scroll to bottom)
+- Alert message
+- Loading Indicator
+
 ## Demo
