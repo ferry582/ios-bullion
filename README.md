@@ -17,5 +17,6 @@ iOS 17.0
 - Pagination (Scroll to bottom)
 - Alert message
 - Loading Indicator
+- Custom Dialog
 
 ## Demo

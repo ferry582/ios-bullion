@@ -14,6 +14,8 @@ class UserCollectionViewCell: UICollectionViewCell {
         let iv = UIImageView()
         iv.image = UIImage(named: "IconImage")
         iv.contentMode = .scaleAspectFit
+        iv.layer.masksToBounds = true
+        iv.layer.cornerRadius = 6
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()

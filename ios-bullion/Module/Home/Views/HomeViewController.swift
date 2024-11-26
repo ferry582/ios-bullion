@@ -9,7 +9,7 @@ import UIKit
 import Combine
 
 class HomeViewController: UIViewController {
-
+    
     // MARK: - Properties
     private let viewModel: HomeViewModel
     private var cancellables = Set<AnyCancellable>()
@@ -19,7 +19,7 @@ class HomeViewController: UIViewController {
         }),
         ListUsersSection(users: [])
     ]
-   
+    
     // MARK: - UI Components
     private let loadingView = LoadingView()
     
@@ -98,7 +98,7 @@ class HomeViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         collectionView.contentInset = .init(top: view.safeAreaInsets.top, left: 0, bottom: 0, right: 0)
     }
-
+    
     // MARK: - UI Set Up
     private func configureNavBar() {
         let imageItem = UIBarButtonItem(customView: logoImageView)
@@ -116,6 +116,7 @@ class HomeViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(addUserButton)
         view.addSubview(loadingView)
+        view.bringSubviewToFront(loadingView)
         
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -164,6 +165,12 @@ class HomeViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.userDetail
+            .sink { [weak self] user in
+                self?.showUserDetailDialog(user: user)
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - Actions
@@ -182,6 +189,7 @@ class HomeViewController: UIViewController {
         navigationController?.pushViewController(RegisterViewController(viewModel: RegisterViewModel()), animated: true)
     }
     
+    // MARK: - Methods
     private func updatePageIndicator(currentPage: Int) {
         guard let footerView = collectionView.supplementaryView(
             forElementKind: UICollectionView.elementKindSectionFooter,
@@ -190,6 +198,28 @@ class HomeViewController: UIViewController {
             return
         }
         footerView.currentPage(currentPage)
+    }
+    
+    private func showUserDetailDialog(user: User) {
+        let detailUserView = DetailUserView()
+        let detailDialogVC = DialogViewController(detailUserView)
+        detailUserView.setupData(user: user)
+        
+        detailUserView.didTappedEditButton = { [weak self] in
+            detailDialogVC.hide()
+            self?.navigationController?.pushViewController(EditUserViewController(viewModel: EditUserViewModel()), animated: true)
+        }
+        
+        detailUserView.didTappedUserImage = { [weak self] in
+            guard let photo = user.photo else { return }
+            detailDialogVC.dismiss(animated: true)
+            let userPhotoView = UserPhotoView()
+            let photoDialogVC = DialogViewController(userPhotoView)
+            userPhotoView.setImage(image: photo)
+            self?.navigationController?.present(photoDialogVC, animated: true)
+        }
+        
+        navigationController?.present(detailDialogVC, animated: true)
     }
 }
 
@@ -221,15 +251,8 @@ extension HomeViewController: UICollectionViewDataSource {
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.cellForItem(at: indexPath) is UserCollectionViewCell {
-            let detailUserView = DetailUserView()
-            let dialogVC = DialogViewController(detailUserView)
-            
-            detailUserView.didTappedEditButton = { [weak self] in
-                dialogVC.hide()
-                self?.navigationController?.pushViewController(EditUserViewController(viewModel: EditUserViewModel()), animated: true)
-            }
-            
-            navigationController?.present(dialogVC, animated: true)
+            let userId = viewModel.users.value[indexPath.item].id
+            viewModel.getUserDetail(id: userId)
         }
     }
     

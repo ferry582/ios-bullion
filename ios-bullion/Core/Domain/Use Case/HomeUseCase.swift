@@ -10,6 +10,7 @@ import Combine
 
 protocol HomeUseCase {
     func getUsers(offset: Int, limit: Int) -> AnyPublisher<[User], Error>
+    func getUser(id: String) -> AnyPublisher<User, Error>
 }
 
 struct HomeUseCaseImpl {
@@ -19,5 +20,9 @@ struct HomeUseCaseImpl {
 extension HomeUseCaseImpl: HomeUseCase {
     func getUsers(offset: Int, limit: Int) -> AnyPublisher<[User], any Error> {
         return repository.getUsers(offset: offset, limit: limit)
+    }
+    
+    func getUser(id: String) -> AnyPublisher<User, any Error> {
+        return repository.getUser(id: id)
     }
 }

@@ -9,12 +9,18 @@ import UIKit
 
 class DetailUserView: UIView {
     var didTappedEditButton: (() -> Void)?
+    var didTappedUserImage: (() -> Void)?
     
     // MARK: - UI Components
-    private let userImageView: UIImageView = {
+    private lazy var userImageView: UIImageView = {
         let iv = UIImageView()
         iv.image = UIImage(named: "IconImage")
         iv.contentMode = .scaleAspectFit
+        iv.layer.masksToBounds = true
+        iv.layer.cornerRadius = 10
+        iv.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(userImageTapped))
+        iv.addGestureRecognizer(tapGesture)
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
@@ -39,10 +45,10 @@ class DetailUserView: UIView {
         return label
     }()
     
-    private let genderInfoView = InfoItemView(title: "Gender", value: "MALE")
-    private let phoneNumberInfoView = InfoItemView(title: "Phone Number", value: "082182822828")
-    private let dobInfoView = InfoItemView(title: "Date of Birth", value: "14 May 1998")
-    private let addressInfoView = InfoItemView(title: "Address", value: "JL Moh Hatta Gg Bunga Emas No.1002 Tanjung Senang, Bandar Lampung")
+    private let genderInfoView = InfoItemView(title: "Gender")
+    private let phoneNumberInfoView = InfoItemView(title: "Phone Number")
+    private let dobInfoView = InfoItemView(title: "Date of Birth")
+    private let addressInfoView = InfoItemView(title: "Address")
     
     private lazy var infoStackView: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [
@@ -83,6 +89,8 @@ class DetailUserView: UIView {
         NSLayoutConstraint.activate([
             userImageView.topAnchor.constraint(equalTo: topAnchor),
             userImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            userImageView.heightAnchor.constraint(equalToConstant: 64),
+            userImageView.widthAnchor.constraint(equalToConstant: 64),
             
             nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -104,9 +112,25 @@ class DetailUserView: UIView {
         ])
     }
     
+    func setupData(user: User) {
+        nameLabel.text = user.name
+        emailLabel.text = user.email
+        genderInfoView.setText(user.gender.rawValue.uppercased())
+        phoneNumberInfoView.setText(user.phone)
+        dobInfoView.setText(user.dob.toFormattedString(format: "dd MMMM yyyy"))
+        addressInfoView.setText(user.address)
+        if let photo = user.photo {
+            self.userImageView.image = photo
+        }
+    }
+    
     // MARK: - Actions
     @objc private func editUserButtonTapped() {
         didTappedEditButton?()
+    }
+    
+    @objc private func userImageTapped() {
+        didTappedUserImage?()
     }
 }
 
@@ -123,6 +147,7 @@ class InfoItemView: UIView {
     private let valueLabel: UILabel = {
         let label = UILabel()
         label.font = .customFont(font: .inter, style: .medium, size: 12)
+        label.text = "-"
         label.textAlignment = .left
         label.textColor = .black
         label.numberOfLines = 2
@@ -130,10 +155,9 @@ class InfoItemView: UIView {
         return label
     }()
     
-    init(title: String, value: String) {
+    init(title: String) {
         super.init(frame: .zero)
         titleLabel.text = title
-        valueLabel.text = value
         setupViews()
     }
     

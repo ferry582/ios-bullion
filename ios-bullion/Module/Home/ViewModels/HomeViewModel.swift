@@ -16,6 +16,7 @@ class HomeViewModel {
     private var currentOffset = 10
     
     private(set) var users = CurrentValueSubject<[User], Never>([])
+    private(set) var userDetail = PassthroughSubject<User, Never>()
     private(set) var navigateToLogin = CurrentValueSubject<Bool, Never>(false)
     private(set) var isLoading = CurrentValueSubject<Bool, Never>(false)
     private(set) var alertMessage = PassthroughSubject<String, Never>()
@@ -46,12 +47,7 @@ class HomeViewModel {
             .sink { [weak self] completion in
                 switch completion {
                 case .finished: break
-                case .failure(let error):
-                    if let networkError = error as? NetworkError {
-                        self?.alertMessage.send(networkError.description)
-                    } else {
-                        self?.alertMessage.send("An unexpected error occurred")
-                    }
+                case .failure(let error): self?.showErrorMessage(error: error)
                 }
                 self?.isLoading.send(false)
             } receiveValue: { [weak self] users in
@@ -69,5 +65,31 @@ class HomeViewModel {
     func reloadUsers() {
         users.send([])
         currentOffset = 10
+        isBottomReached = false
+    }
+    
+    func getUserDetail(id: String) {
+        isLoading.send(true)
+        
+        useCase.getUser(id: id)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished: break
+                case .failure(let error): self?.showErrorMessage(error: error)
+                }
+                self?.isLoading.send(false)
+            } receiveValue: { [weak self] user in
+                self?.userDetail.send(user)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func showErrorMessage(error: Error) {
+        if let networkError = error as? NetworkError {
+            alertMessage.send(networkError.description)
+        } else {
+            alertMessage.send("An unexpected error occurred")
+        }
     }
 }

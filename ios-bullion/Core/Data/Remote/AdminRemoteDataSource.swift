@@ -10,6 +10,7 @@ import Combine
 
 protocol AdminRemoteDataSource {
     func getUsers(offset: Int, limit: Int) -> AnyPublisher<UsersResponse, Error>
+    func getUser(id: String) -> AnyPublisher<UserDetailResponse, Error>
 }
 
 struct AdminRemoteDataSourceImpl {
@@ -19,5 +20,9 @@ struct AdminRemoteDataSourceImpl {
 extension AdminRemoteDataSourceImpl: AdminRemoteDataSource {
     func getUsers(offset: Int, limit: Int) -> AnyPublisher<UsersResponse, any Error> {
         return APIService.makeRequest(for: AdminAPI.users(offset: offset, limit: limit))
+    }
+    
+    func getUser(id: String) -> AnyPublisher<UserDetailResponse, any Error> {
+        return APIService.makeRequest(for: AdminAPI.user(id: id))
     }
 }

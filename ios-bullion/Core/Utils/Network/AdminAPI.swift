@@ -9,6 +9,7 @@ import Foundation
 
 enum AdminAPI {
     case users(offset: Int, limit: Int)
+    case user(id: String)
 }
 
 extension AdminAPI: Endpoint {
@@ -22,8 +23,10 @@ extension AdminAPI: Endpoint {
     
     var path: String {
         switch self {
-        case .users(let offset, let limit):
+        case .users:
             return "/api/v1/admin"
+        case .user(let id):
+            return "/api/v1/admin/\(id)"
         }
     }
     
@@ -34,12 +37,16 @@ extension AdminAPI: Endpoint {
                 URLQueryItem(name: "offset", value: String(offset)),
                 URLQueryItem(name: "limit", value: String(limit))
             ]
+        default:
+            return []
         }
     }
     
     var method: String {
         switch self {
-        case .users(let offset, let limit):
+        case .users:
+            return "get"
+        case .user:
             return "get"
         }
     }
