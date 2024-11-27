@@ -155,6 +155,21 @@ class TextFieldView: UIView {
         textField.endEditing(true)
     }
     
+    func emptyInputAccessory() {
+        textField.inputAccessoryView = UIView()
+    }
+    
+    func setTappableText(text: String) {
+        let attributes: [NSAttributedString.Key: Any] = [
+            .underlineStyle: NSUnderlineStyle.single.rawValue,
+            .underlineColor: UIColor(color: .textBlue),
+            .foregroundColor: UIColor(color: .textBlue),
+            .font: UIFont.customFont(font: .roboto, style: .regular, size: 14)
+        ]
+        let attributedString = NSAttributedString(string: text, attributes: attributes)
+        textField.attributedText = attributedString
+    }
+    
     // MARK: - Actions
     @objc private func rightIconTapped(target: Any?, action: Selector) {
         if isSecureTextField {

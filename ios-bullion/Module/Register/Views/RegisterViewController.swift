@@ -105,6 +105,7 @@ class RegisterViewController: BaseViewController {
 
 extension RegisterViewController: RegisterViewDelegate {
     func didTapAddUserButton(userData: inout User, password: String, confirmPassword: String) {
+        guard !viewModel.isLoading.value else { return }
         userData.photo = selectedImage
         viewModel.register(user: userData, photo: selectedImage, password: password, confirmPassword: confirmPassword)
     }

@@ -8,13 +8,16 @@
 import UIKit
 
 protocol EditUserViewDelegate: AnyObject {
-    func didTapAddUserButton()
+    func didTapAddUserButton(user: User)
+    func didTapUserPhoto()
 }
 
 class EditUserView: UIView {
     
     // MARK: - Properties
     weak var delegate: EditUserViewDelegate?
+    private var user: User
+    private var selectedDoB: Date?
     
     // MARK: - UI Components
     private let roundedContainerView = RoundedContainerView()
@@ -34,12 +37,22 @@ class EditUserView: UIView {
         return textfield
     }()
     
+    private lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.preferredDatePickerStyle = .wheels
+        picker.datePickerMode = .date
+        picker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        picker.backgroundColor = UIColor(color: .secondaryText).withAlphaComponent(0.3)
+        return picker
+    }()
+    
     private lazy var dobTextField: TextFieldView = {
         let textfield = TextFieldView()
         textfield.configure(title: "Date of Birth", placeholder: "Select date", contentType: .birthdateDay, isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconCalendar")!)
+        textfield.addInputView(view: datePicker)
         textfield.didTappedTextField = { [weak self] in
-            
+            textfield.startEditing()
         }
         return textfield
     }()
@@ -56,13 +69,20 @@ class EditUserView: UIView {
         return textfield
     }()
     
+    private let addressTextField: TextFieldView = {
+        let textfield = TextFieldView()
+        textfield.configure(title: "Address", placeholder: "Enter adress..", contentType: .fullStreetAddress)
+        return textfield
+    }()
+    
     private lazy var photoProfileTextField: TextFieldView = {
         let textfield = TextFieldView()
         textfield.configure(title: "Photo Profile", placeholder: "Select photo", isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconLink")!)
         textfield.didTappedTextField = { [weak self] in
-            
+            self?.delegate?.didTapUserPhoto()
         }
+        textfield.emptyInputAccessory()
         return textfield
     }()
     
@@ -74,9 +94,11 @@ class EditUserView: UIView {
     }()
     
     // MARK: - Life Cycle
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(user: User) {
+        self.user = user
+        super.init(frame: .zero)
         configureViews()
+        configureUserData()
     }
     
     required init?(coder: NSCoder) {
@@ -87,7 +109,7 @@ class EditUserView: UIView {
     private func configureViews() {
         addSubview(roundedContainerView)
         addSubview(stackView)
-        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField].forEach {
+        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, addressTextField, photoProfileTextField].forEach {
             stackView.addArrangedSubview($0)
         }
         addSubview(updateUserButton)
@@ -118,6 +140,34 @@ class EditUserView: UIView {
     
     // MARK: - Actions
     @objc func updateUserButtonTapped(sender: UIButton!) {
-        delegate?.didTapAddUserButton()
+        let user = User(
+            id: user.id,
+            name: nameTextField.text,
+            gender: genderSelectionView.selectedGender,
+            dob: selectedDoB,
+            email: emailTextField.text,
+            photo: user.photo,
+            phone: phoneNumberTextField.text,
+            address: addressTextField.text
+        )
+        delegate?.didTapAddUserButton(user: user)
+    }
+    
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        selectedDoB = sender.date
+        dobTextField.text = selectedDoB!.toFormattedString()
+    }
+    
+    // MARK: - Methods
+    private func configureUserData() {
+        nameTextField.text = user.name
+        genderSelectionView.selectedGender = user.gender
+        dobTextField.text = user.dob!.toFormattedString()
+        datePicker.date = user.dob!
+        selectedDoB = user.dob
+        emailTextField.text = user.email
+        phoneNumberTextField.text = user.phone
+        addressTextField.text = user.address
+        photoProfileTextField.setTappableText(text: "photoprofile.jpg")
     }
 }

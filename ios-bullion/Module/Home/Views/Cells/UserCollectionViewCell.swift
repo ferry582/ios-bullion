@@ -94,7 +94,7 @@ class UserCollectionViewCell: UICollectionViewCell {
     func configure(user: User) {
         nameLabel.text = user.name
         emailLabel.text = user.email
-        dobLabel.text = user.dob?.toFormattedString()
+        dobLabel.text = user.dob?.toFormattedString(format: "MMMM dd, yyyy")
         if let photo = user.photo {
             imageView.image = photo
         }

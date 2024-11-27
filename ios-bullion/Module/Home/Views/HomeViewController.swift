@@ -207,7 +207,9 @@ class HomeViewController: UIViewController {
         
         detailUserView.didTappedEditButton = { [weak self] in
             detailDialogVC.hide()
-            self?.navigationController?.pushViewController(EditUserViewController(viewModel: EditUserViewModel()), animated: true)
+            let editUserVC = EditUserViewController(viewModel: EditUserViewModel(), user: user)
+            editUserVC.delegate = self
+            self?.navigationController?.pushViewController(editUserVC, animated: true)
         }
         
         detailUserView.didTappedUserImage = { [weak self] in
@@ -263,5 +265,11 @@ extension HomeViewController: UICollectionViewDelegate {
                 viewModel.getUsers()
             }
         }
+    }
+}
+
+extension HomeViewController: EditUserViewControllerDelegate {
+    func shoudReloadUsersList() {
+        viewModel.reloadUsers()
     }
 }

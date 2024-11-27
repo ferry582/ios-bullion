@@ -12,6 +12,7 @@ import UIKit
 protocol AdminRepository {
     func getUsers(offset: Int, limit: Int) -> AnyPublisher<[User], Error>
     func getUser(id: String) -> AnyPublisher<User, Error>
+    func updateUser(user: User) -> AnyPublisher<(message: String, isError: Bool), Error>
 }
 
 struct AdminRepositoryImpl {
@@ -34,6 +35,14 @@ extension AdminRepositoryImpl: AdminRepository {
         return dataSource.getUser(id: id)
             .map { response in
                 AdminMapper.transformUserResponseToDomain(input: response.data)
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func updateUser(user: User) -> AnyPublisher<(message: String, isError: Bool), any Error> {
+        return dataSource.updateUser(user: user)
+            .map { response in
+                return (response.message, response.iserror)
             }
             .eraseToAnyPublisher()
     }

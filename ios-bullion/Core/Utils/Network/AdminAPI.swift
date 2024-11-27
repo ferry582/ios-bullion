@@ -10,6 +10,7 @@ import Foundation
 enum AdminAPI {
     case users(offset: Int, limit: Int)
     case user(id: String)
+    case update(user: User)
 }
 
 extension AdminAPI: Endpoint {
@@ -27,6 +28,8 @@ extension AdminAPI: Endpoint {
             return "/api/v1/admin"
         case .user(let id):
             return "/api/v1/admin/\(id)"
+        case .update(let user):
+            return "/api/v1/admin/\(user.id)/update"
         }
     }
     
@@ -48,11 +51,25 @@ extension AdminAPI: Endpoint {
             return "get"
         case .user:
             return "get"
+        case .update:
+            return "put"
         }
     }
     
     var body: Data? {
         switch self {
+        case .update(let user):
+            let (firstName, lastName) = user.name.getFirstAndLastName()
+            let json: [String: String] = [
+                "first_name": firstName!,
+                "last_name": lastName ?? firstName!,
+                "gender": user.gender!.rawValue,
+                "date_of_birth": user.dob!.toISO8601String(),
+                "email": user.email,
+                "phone": user.phone,
+                "address": user.address
+            ]
+            return try? JSONSerialization.data(withJSONObject: json)
         default:
             return nil
         }
@@ -76,6 +93,7 @@ extension AdminAPI: Endpoint {
             request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             return request
         }
+        
         return nil
     }
 }

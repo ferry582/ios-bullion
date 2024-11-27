@@ -117,7 +117,7 @@ class DetailUserView: UIView {
         emailLabel.text = user.email
         genderInfoView.setText(user.gender?.rawValue.uppercased() ?? "-")
         phoneNumberInfoView.setText(user.phone)
-        dobInfoView.setText(user.dob?.toFormattedString(format: "dd MMMM yyyy") ?? "-")
+        dobInfoView.setText(user.dob?.toFormattedString() ?? "-")
         addressInfoView.setText(user.address)
         if let photo = user.photo {
             self.userImageView.image = photo

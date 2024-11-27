@@ -66,6 +66,7 @@ class HomeViewModel {
         users.send([])
         currentOffset = 10
         isBottomReached = false
+        getUsers()
     }
     
     func getUserDetail(id: String) {

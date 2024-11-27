@@ -73,6 +73,7 @@ class RegisterView: UIView {
         textfield.configure(title: "Photo Profile", placeholder: "Select photo", isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconLink")!)
         textfield.addInputView(view: UIView())
+        textfield.emptyInputAccessory()
         textfield.didTappedTextField = { [weak self] in
             self?.delegate?.showImagePicker()
         }
@@ -161,12 +162,12 @@ class RegisterView: UIView {
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         selectedDoB = sender.date
-        dobTextField.text = selectedDoB!.toFormattedString(format: "dd MMMM yyyy")
+        dobTextField.text = selectedDoB!.toFormattedString()
     }
     
     // MARK: - Methods
     func setPhotoTextFieldDetails(filename: String) {
         photoProfileTextField.endEditing()
-        photoProfileTextField.text = filename
+        photoProfileTextField.setTappableText(text: filename)
     }
 }

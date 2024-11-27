@@ -17,4 +17,9 @@ struct AdminInjection {
         let repository = provideRepository()
         return HomeUseCaseImpl(repository: repository)
     }
+    
+    static func provideEditUserUseCase() -> EditUserUseCase {
+        let repository = provideRepository()
+        return EditUserUseCaseImpl(repository: repository)
+    }
 }

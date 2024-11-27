@@ -12,6 +12,9 @@ struct UsersResponse: Codable {
 }
 
 struct UserDetailResponse: Codable {
+    let status: Int
+    let iserror: Bool
+    let message: String
     let data: UserResponse
 }
 

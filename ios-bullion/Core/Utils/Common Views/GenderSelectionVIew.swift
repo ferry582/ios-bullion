@@ -15,7 +15,7 @@ enum Gender: String {
 class GenderSelectionView: UIView {
     
     // MARK: - Properties
-    private(set) var selectedGender: Gender? {
+    var selectedGender: Gender? {
         didSet {
             maleButton.isSelected = selectedGender == .male
             femaleButton.isSelected = selectedGender == .female
