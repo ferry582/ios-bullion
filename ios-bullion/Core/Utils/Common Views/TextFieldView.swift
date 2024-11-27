@@ -9,12 +9,17 @@ import UIKit
 
 class TextFieldView: UIView {
     // MARK: - Properties
-    var didTappedRightIcon: (() -> Void)?
+    var didTappedTextField: (() -> Void)?
     private var isEditable = true
     private var isSecureTextField = false
     
     var text: String {
-        return textField.text ?? ""
+        get {
+            return textField.text ?? ""
+        }
+        set {
+            textField.text = newValue
+        }
     }
     
     // MARK: - UI Components
@@ -34,7 +39,16 @@ class TextFieldView: UIView {
         return label
     }()
     
-    private let textField: PaddedTextField = {
+    private lazy var toolbar: UIToolbar = {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonTapped))
+        toolbar.setItems([flexibleSpace, doneButton], animated: false)
+        return toolbar
+    }()
+    
+    private lazy var textField: PaddedTextField = {
         let textfield = PaddedTextField()
         textfield.textColor = .black
         textfield.font = .customFont(font: .roboto, style: .regular, size: 14)
@@ -44,6 +58,7 @@ class TextFieldView: UIView {
         textfield.layer.borderColor = UIColor(color: .border).cgColor
         textfield.layer.borderWidth = 1
         textfield.autocapitalizationType = .none
+        textfield.inputAccessoryView = toolbar
         textfield.translatesAutoresizingMaskIntoConstraints = false
         return textfield
     }()
@@ -128,15 +143,31 @@ class TextFieldView: UIView {
         textField.rightViewMode = .always
     }
     
+    func addInputView(view: UIView) {
+        textField.inputView = view
+    }
+    
+    func startEditing() {
+        textField.becomeFirstResponder()
+    }
+    
+    func endEditing() {
+        textField.endEditing(true)
+    }
+    
     // MARK: - Actions
-    @objc func rightIconTapped(target: Any?, action: Selector) {
+    @objc private func rightIconTapped(target: Any?, action: Selector) {
         if isSecureTextField {
             textField.isSecureTextEntry.toggle()
             let iconName = textField.isSecureTextEntry ? "IconHidePass" : "IconShowPass"
             setRightIcon(image: UIImage(named: iconName)!)
         } else {
-            didTappedRightIcon?()
+            didTappedTextField?()
         }
+    }
+    
+    @objc private func doneButtonTapped() {
+        endEditing(true)
     }
 }
 
@@ -146,8 +177,12 @@ extension TextFieldView: UITextFieldDelegate {
         return false
     }
     
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         return isEditable
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        didTappedTextField?()
     }
 }
 

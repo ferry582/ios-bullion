@@ -38,7 +38,7 @@ class EditUserView: UIView {
         let textfield = TextFieldView()
         textfield.configure(title: "Date of Birth", placeholder: "Select date", contentType: .birthdateDay, isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconCalendar")!)
-        textfield.didTappedRightIcon = { [weak self] in
+        textfield.didTappedTextField = { [weak self] in
             
         }
         return textfield
@@ -60,7 +60,7 @@ class EditUserView: UIView {
         let textfield = TextFieldView()
         textfield.configure(title: "Photo Profile", placeholder: "Select photo", isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconLink")!)
-        textfield.didTappedRightIcon = { [weak self] in
+        textfield.didTappedTextField = { [weak self] in
             
         }
         return textfield

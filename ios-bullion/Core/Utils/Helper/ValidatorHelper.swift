@@ -7,6 +7,29 @@
 
 import Foundation
 
+enum ValidationError: Error {
+    case notEmpty(field: String)
+    case invalidEmail
+    case invalidPassword
+    case invalidPasswordLength
+    case passwordNotMatch
+    
+    var description: String {
+        switch self {
+        case .notEmpty(let field):
+            return "\(field) must not be empty"
+        case .invalidEmail:
+            return "Must have valid email"
+        case .invalidPasswordLength:
+            return "Password must have at least 8 characters"
+        case .invalidPassword:
+            return "Password must have at least, one uppercase and one number"
+        case .passwordNotMatch:
+            return "Password do not match!"
+        }
+    }
+}
+
 class Validator {
     static func validate(text: String, with rules: [Rule]) throws {
         for rule in rules {
@@ -39,24 +62,4 @@ struct Rule {
     static let validPasswordLength: Rule = Rule(check: { pass in
         if pass.count < 8 { throw ValidationError.invalidPasswordLength }
     })
-}
-
-enum ValidationError: Error {
-    case notEmpty(field: String)
-    case invalidEmail
-    case invalidPassword
-    case invalidPasswordLength
-    
-    var description: String {
-        switch self {
-        case .notEmpty(let field):
-            return "\(field) must not be empty"
-        case .invalidEmail:
-            return "Must have valid email"
-        case .invalidPasswordLength:
-            return "Password must have at least 8 characters"
-        case .invalidPassword:
-            return "Password must have at least, one uppercase and one number"
-        }
-    }
 }

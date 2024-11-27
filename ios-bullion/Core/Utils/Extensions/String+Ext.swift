@@ -29,4 +29,14 @@ extension String {
         let imageData = Data(base64Encoded: self, options: .ignoreUnknownCharacters)
         return imageData == nil ? nil : UIImage(data: imageData!)
     }
+    
+    func getFirstAndLastName() -> (firstName: String?, lastName: String?) {
+        let nameComponents = self.split(separator: " ").map { String($0) }
+        guard nameComponents.count >= 2 else {
+            return (firstName: nameComponents.first, lastName: nil)
+        }
+        let firstName = nameComponents.first
+        let lastName = nameComponents.dropFirst().joined(separator: " ")
+        return (firstName: firstName, lastName: lastName)
+    }
 }

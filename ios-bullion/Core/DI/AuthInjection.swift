@@ -17,4 +17,9 @@ struct AuthInjection {
         let repository = provideRepository()
         return LoginUseCaseImpl(repository: repository)
     }
+    
+    static func provideRegisterUseCase() -> RegisterUseCase {
+        let repository = provideRepository()
+        return RegisterUseCaseImpl(repository: repository)
+    }
 }

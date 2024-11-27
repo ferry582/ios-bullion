@@ -10,6 +10,7 @@ import Combine
 
 protocol AuthRepository {
     func login(email: String, password: String) -> AnyPublisher<AuthUser, Error>
+    func register(user: User, password: String, imageData: Data) -> AnyPublisher<AuthUser, Error>
 }
 
 struct AuthRepositoryImpl {
@@ -22,6 +23,14 @@ struct AuthRepositoryImpl {
 extension AuthRepositoryImpl: AuthRepository {
     func login(email: String, password: String) -> AnyPublisher<AuthUser, any Error> {
         return dataSource.login(email: email, password: password)
+            .map { response in
+                return response.data
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func register(user: User, password: String, imageData: Data) -> AnyPublisher<AuthUser, any Error> {
+        return dataSource.register(user: user, password: password, imageData: imageData)
             .map { response in
                 return response.data
             }

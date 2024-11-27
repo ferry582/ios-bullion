@@ -8,13 +8,15 @@
 import UIKit
 
 protocol RegisterViewDelegate: AnyObject {
-    func didTapAddUserButton()
+    func didTapAddUserButton(userData: inout User, password: String, confirmPassword: String)
+    func showImagePicker()
 }
 
 class RegisterView: UIView {
     
     // MARK: - Properties
     weak var delegate: RegisterViewDelegate?
+    private var selectedDoB: Date?
     
     // MARK: - UI Components
     private let roundedContainerView = RoundedContainerView()
@@ -34,12 +36,22 @@ class RegisterView: UIView {
         return textfield
     }()
     
+    private lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.preferredDatePickerStyle = .wheels
+        picker.datePickerMode = .date
+        picker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        picker.backgroundColor = UIColor(color: .secondaryText).withAlphaComponent(0.3)
+        return picker
+    }()
+    
     private lazy var dobTextField: TextFieldView = {
         let textfield = TextFieldView()
         textfield.configure(title: "Date of Birth", placeholder: "Select date", contentType: .birthdateDay, isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconCalendar")!)
-        textfield.didTappedRightIcon = { [weak self] in
-            
+        textfield.addInputView(view: datePicker)
+        textfield.didTappedTextField = { [weak self] in
+            textfield.startEditing()
         }
         return textfield
     }()
@@ -60,9 +72,16 @@ class RegisterView: UIView {
         let textfield = TextFieldView()
         textfield.configure(title: "Photo Profile", placeholder: "Select photo", isEditable: false)
         textfield.setRightIcon(image: UIImage(named: "IconLink")!)
-        textfield.didTappedRightIcon = { [weak self] in
-            
+        textfield.addInputView(view: UIView())
+        textfield.didTappedTextField = { [weak self] in
+            self?.delegate?.showImagePicker()
         }
+        return textfield
+    }()
+    
+    private let addressTextField: TextFieldView = {
+        let textfield = TextFieldView()
+        textfield.configure(title: "Address", placeholder: "Enter adress..", contentType: .fullStreetAddress)
         return textfield
     }()
     
@@ -101,7 +120,7 @@ class RegisterView: UIView {
     private func configureViews() {
         addSubview(roundedContainerView)
         addSubview(stackView)
-        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField, passwordTextField, confirmPasswordTextField].forEach {
+        [nameTextField, genderSelectionView, dobTextField, emailTextField, phoneNumberTextField, photoProfileTextField, addressTextField, passwordTextField, confirmPasswordTextField].forEach {
             stackView.addArrangedSubview($0)
         }
         addSubview(addUserButton)
@@ -126,6 +145,28 @@ class RegisterView: UIView {
     
     // MARK: - Actions
     @objc func addUserButtonTapped(sender: UIButton!) {
-        delegate?.didTapAddUserButton()
+        var user = User(
+            id: "",
+            name: nameTextField.text,
+            gender: genderSelectionView.selectedGender,
+            dob: selectedDoB,
+            email: emailTextField.text,
+            photo: nil,
+            phone: phoneNumberTextField.text,
+            address: addressTextField.text
+        )
+        
+        delegate?.didTapAddUserButton(userData: &user, password: passwordTextField.text, confirmPassword: confirmPasswordTextField.text)
+    }
+    
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        selectedDoB = sender.date
+        dobTextField.text = selectedDoB!.toFormattedString(format: "dd MMMM yyyy")
+    }
+    
+    // MARK: - Methods
+    func setPhotoTextFieldDetails(filename: String) {
+        photoProfileTextField.endEditing()
+        photoProfileTextField.text = filename
     }
 }

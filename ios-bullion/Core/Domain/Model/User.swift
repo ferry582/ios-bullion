@@ -10,10 +10,10 @@ import UIKit
 struct User {
     let id: String
     let name: String
-    let gender: Gender
-    let dob: Date
+    let gender: Gender?
+    let dob: Date?
     let email: String
-    let photo: UIImage?
+    var photo: UIImage?
     let phone: String
     let address: String
 }

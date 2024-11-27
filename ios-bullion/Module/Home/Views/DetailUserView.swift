@@ -115,9 +115,9 @@ class DetailUserView: UIView {
     func setupData(user: User) {
         nameLabel.text = user.name
         emailLabel.text = user.email
-        genderInfoView.setText(user.gender.rawValue.uppercased())
+        genderInfoView.setText(user.gender?.rawValue.uppercased() ?? "-")
         phoneNumberInfoView.setText(user.phone)
-        dobInfoView.setText(user.dob.toFormattedString(format: "dd MMMM yyyy"))
+        dobInfoView.setText(user.dob?.toFormattedString(format: "dd MMMM yyyy") ?? "-")
         addressInfoView.setText(user.address)
         if let photo = user.photo {
             self.userImageView.image = photo
